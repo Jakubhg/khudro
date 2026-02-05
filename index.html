@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KhudroBet - Original Casino Games</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Video Background -->
+    <div class="video-background">
+        <video autoplay muted loop id="bgVideo">
+            <source src="VID_20260101_220022.mp4" type="video/mp4">
+        </video>
+        <div class="video-overlay"></div>
+    </div>
+
+    <!-- Main Layout Container -->
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <div class="nav-tabs">
+                    <button class="nav-tab active">Casino</button>
+                </div>
+            </div>
+            
+            <div class="header-center">
+                <div class="logo">
+                    <img src="logo.png.png" alt="KhudroBet Logo" style="height: 20px; width: auto; margin-right: 5px;">
+                    <span class="logo-text">KHUROBET <small style="font-size: 0.6em; opacity: 0.7;">BETA</small></span>
+                </div>
+            </div>
+
+            <div class="header-right">
+                <div class="balance-display">
+                    <i class="fas fa-wallet"></i>
+                    <span id="balance">$1000.00</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <div class="main-layout">
+            <!-- Left Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-section">
+                    <div class="sidebar-header">Games</div>
+                    <div class="sidebar-item active">
+                        <i class="fas fa-gem"></i>
+                        <span>Only on KhudroBet</span>
+                    </div>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-item">
+                        <i class="fas fa-newspaper"></i>
+                        <span>News</span>
+                    </div>
+                    <div class="sidebar-item disabled" style="opacity: 0.5; cursor: not-allowed;">
+                        <i class="fas fa-trophy"></i>
+                        <span>Leaderboard <small style="color: #00d258;">Soon</small></span>
+                    </div>
+                    <div class="sidebar-item disabled" style="opacity: 0.5; cursor: not-allowed;">
+                        <i class="fas fa-wallet"></i>
+                        <span>Deposit <small style="color: #00d258;">Soon</small></span>
+                    </div>
+                    <div class="sidebar-item disabled" style="opacity: 0.5; cursor: not-allowed;">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>Withdrawals <small style="color: #00d258;">Soon</small></span>
+                    </div>
+                    <div class="sidebar-item disabled" style="opacity: 0.5; cursor: not-allowed;">
+                        <i class="fas fa-gift"></i>
+                        <span>Rewards <small style="color: #00d258;">Soon</small></span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <!-- Promotional Banners -->
+                <div class="promo-banners">
+                    <div class="promo-banner">
+                        <div class="promo-content">
+                            <h3>Vilx is such a fat pig!</h3>
+                            <p>Vilx is banned our servers cant handle his weight!</p>
+                        </div>
+                    </div>
+                    <div class="promo-banner">
+                        <div class="promo-content">
+                            <h3>Khudrobet is Live!</h3>
+                            <p>Exclusive VIP benefits</p>
+                        </div>
+                    </div>
+                    <div class="promo-banner">
+                        <div class="promo-content">
+                            <h3>TinaAhmed our new CEO!</h3>
+                            <p>enjoy instant cahsout and depoists!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="search-section">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search for a game">
+                    </div>
+                </div>
+
+                <!-- Game Category Tabs -->
+                <div class="game-tabs">
+                    <button class="game-tab active">Khudrobetorginals</button>
+                </div>
+
+                <!-- Games Grid -->
+                <div class="games-grid">
+                    <div class="game-card" data-game="dice" onclick="window.location.href='dice.html'">
+                        <div class="game-image">
+                            <img src="dice icon.png" alt="Dice Game" style="width: 100%; height: 100%; object-fit: contain; padding: 5px;">
+                        </div>
+                        <div class="game-info">
+                            <h4>Dice</h4>
+                        </div>
+                    </div>
+
+                    <div class="game-card" data-game="blackjack" onclick="window.location.href='blackjack.html'">
+                        <div class="game-image">
+                            <img src="blackjck icon.png" alt="Blackjack Game" style="width: 100%; height: 100%; object-fit: contain; padding: 5px;">
+                        </div>
+                        <div class="game-info">
+                            <h4>Blackjack</h4>
+                        </div>
+                    </div>
+
+                    <div class="game-card" data-game="plinko" onclick="window.location.href='plinko.html'">
+                        <div class="game-image">
+                            <img src="plinkoicon.png.png" alt="Plinko Game" style="width: 100%; height: 100%; object-fit: contain; padding: 5px;">
+                        </div>
+                        <div class="game-info">
+                            <h4>Plinko</h4>
+                        </div>
+                    </div>
+
+                    <div class="game-card disabled" data-game="crosskhudro" onclick="return false;">
+                        <div class="game-image">
+                            <img src="comingsoon.png.png" alt="CrossKhudro Coming Soon" style="width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%) opacity(0.7);">
+                        </div>
+                        <div class="game-info">
+                            <h4>CrossTheKhudro</h4>
+                            <p style="color: rgba(255,255,255,0.5); font-size: 12px;">✝️ Coming Soon</p>
+                        </div>
+                    </div>
+
+                    <div class="game-card disabled" data-game="keno" onclick="return false;">
+                        <div class="game-image">
+                            <img src="comingsoon.png.png" alt="Keno Coming Soon" style="width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%) opacity(0.7);">
+                        </div>
+                        <div class="game-info">
+                            <h4>Keno</h4>
+                            <p style="color: rgba(255,255,255,0.5); font-size: 12px;">🎰 Coming Soon</p>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal Container -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Modal Title</h3>
+                <button class="modal-close" id="modalClose">×</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                Modal content
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

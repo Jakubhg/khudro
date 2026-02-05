@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dice - KhudroBet</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Dice Game - Exact Stake.com Style */
+        .dice-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: #0f212e;
+            overflow: hidden;
+        }
+
+        .dice-header {
+            background: #1a2c38;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            height: 60px;
+            position: relative;
+        }
+
+        .header-center {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .header-left, .header-right {
+            z-index: 1;
+        }
+
+        .dice-main {
+            display: flex;
+            flex: 1;
+            min-height: calc(100vh - 60px);
+        }
+
+        .dice-control-panel {
+            width: 320px;
+            background: #1a2c38;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+            scrollbar-width: thin;
+            scrollbar-color: #00d258 #1a2c38;
+        }
+
+        /* Custom Scrollbar */
+        .dice-control-panel::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .dice-control-panel::-webkit-scrollbar-track {
+            background: #1a2c38;
+        }
+
+        .dice-control-panel::-webkit-scrollbar-thumb {
+            background: #00d258;
+            border-radius: 3px;
+        }
+
+        .dice-control-panel::-webkit-scrollbar-thumb:hover {
+            background: #00b848;
+        }
+
+        .dice-game-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #0f212e;
+            padding: 40px;
+            gap: 30px;
+        }
+
+        /* Stake.com Slider */
+        .dice-slider-container {
+            width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .dice-slider-track {
+            width: 100%;
+            height: 40px;
+            background: linear-gradient(to right, 
+                #ff4757 0%,     /* Red 0-50 */
+                #ff4757 49.5%,  /* Red up to 49.5 */
+                #00d258 50.5%,  /* Green from 50.5 */
+                #00d258 100%    /* Green 50.5-100 */
+            );
+            border-radius: 20px;
+            position: relative;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .dice-slider-pointer {
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            background: #3b82f6;
+            border-radius: 4px;
+            border: 2px solid #2563eb;
+            top: 50%;
+            transform: translateY(-50%) translateX(-50%);
+            cursor: grab;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+        }
+
+        .dice-slider-pointer:active {
+            cursor: grabbing;
+            transform: translateY(-50%) translateX(-50%) scale(1.1);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
+        }
+
+        .dice-slider-wrapper {
+            width: 100%;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 25px;
+        }
+
+        .dice-slider-labels {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 500;
+        }
+
+        .dice-info-display {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .dice-info-item {
+            text-align: center;
+        }
+
+        .dice-info-label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .dice-info-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .dice-result-text {
+            font-size: 24px;
+            font-weight: 600;
+            text-align: center;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Control Panel Styles */
+        .tab-container {
+            display: flex;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 4px;
+            gap: 4px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            padding: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .tab-btn.active {
+            background: #00d258;
+            color: #fff;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .bet-input-wrapper {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px 16px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+        }
+
+        .bet-input-wrapper:focus-within {
+            border-color: #00d258;
+            background: rgba(0, 210, 88, 0.05);
+        }
+
+        .bet-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            outline: none;
+        }
+
+        .bet-currency {
+            color: #f7931a;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .bet-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .bet-btn-half,
+        .bet-btn-double {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 8px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+
+        .bet-btn-half:hover,
+        .bet-btn-double:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .roll-button {
+            background: linear-gradient(135deg, #00d258 0%, #00b848 100%);
+            border: none;
+            color: #fff;
+            padding: 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(0, 210, 88, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .roll-button:hover {
+            background: linear-gradient(135deg, #00b848 0%, #00a640 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 210, 88, 0.4);
+        }
+
+        .roll-button:disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.3);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .history-container {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .history-number {
+            font-weight: bold;
+        }
+
+        .history-multiplier {
+            color: #00d258;
+            font-weight: bold;
+        }
+
+        .back-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 8px 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: 4px;
+        }
+
+        .back-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .win-animation {
+            animation: winPulse 0.5s ease;
+        }
+
+        @keyframes winPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .loss-animation {
+            animation: lossShake 0.5s ease;
+        }
+
+        @keyframes lossShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="dice-container">
+        <!-- Header -->
+        <header class="dice-header">
+            <div class="header-left">
+                <button class="back-btn" onclick="window.location.href='index.html'">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back to Casino</span>
+                </button>
+            </div>
+            <div class="header-center">
+                <div class="logo">
+                    <img src="logo.png.png" alt="KhudroBet Logo" style="height: 20px; width: auto; margin-right: 5px;">
+                    <span class="logo-text">KHUROBET <small style="font-size: 0.6em; opacity: 0.7;">BETA</small></span>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="balance-display">
+                    <i class="fas fa-wallet"></i>
+                    <span id="balance">$1000.00</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Game Area -->
+        <main class="dice-main">
+            <!-- Control Panel -->
+            <aside class="dice-control-panel">
+                <!-- Manual/Auto Tabs -->
+                <div class="tab-container">
+                    <button class="tab-btn active">Manual</button>
+                </div>
+
+                <!-- Bet Amount -->
+                <div class="control-group">
+                    <label class="control-label">Amount</label>
+                    <div class="bet-input-wrapper">
+                        <span class="bet-currency">$</span>
+                        <input type="text" class="bet-input" id="betAmount" value="1.00">
+                    </div>
+                    <div class="bet-buttons">
+                        <button class="bet-btn-half" onclick="halveBet()">1/2</button>
+                        <button class="bet-btn-double" onclick="doubleBet()">2x</button>
+                    </div>
+                </div>
+
+                <!-- Net Gain -->
+                <div class="control-group">
+                    <label class="control-label">Net Gain on Win</label>
+                    <div class="bet-input-wrapper">
+                        <span class="bet-currency">$</span>
+                        <input type="text" class="bet-input" id="netGain" value="0.00" readonly>
+                    </div>
+                </div>
+
+                <!-- Play Button -->
+                <button class="roll-button" id="rollButton" onclick="rollDice()">Play</button>
+
+                <!-- History -->
+                <div class="control-group">
+                    <label class="control-label">History</label>
+                    <div class="history-container" id="history">
+                        <!-- History items will be added here -->
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Game Area -->
+            <section class="dice-game-area">
+                <!-- Result Text -->
+                <div class="dice-result-text" id="diceResult">Ready to roll</div>
+
+                <!-- Stake.com Slider -->
+                <div class="dice-slider-container">
+                    <div class="dice-slider-wrapper">
+                        <div class="dice-slider-track" id="sliderTrack">
+                            <div class="dice-slider-pointer" id="sliderPointer"></div>
+                        </div>
+                    </div>
+                    <div class="dice-slider-labels">
+                        <span>0</span>
+                        <span>25</span>
+                        <span>50</span>
+                        <span>75</span>
+                        <span>100</span>
+                    </div>
+                    <div class="dice-info-display">
+                        <div class="dice-info-item">
+                            <div class="dice-info-label">Winnings</div>
+                            <div class="dice-info-value" id="winnings">2.0000</div>
+                        </div>
+                        <div class="dice-info-item">
+                            <div class="dice-info-label">Roll Over</div>
+                            <div class="dice-info-value" id="rollOver">50.50</div>
+                        </div>
+                        <div class="dice-info-item">
+                            <div class="dice-info-label">Win Chance</div>
+                            <div class="dice-info-value" id="winChance">49.5000%</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        class DiceGame {
+            constructor() {
+                this.balance = parseFloat(localStorage.getItem('plinkoBalance') || localStorage.getItem('mainBalance')) || 1000.00;
+                this.betAmount = 1.00;
+                this.targetNumber = 50;
+                this.isRolling = false;
+                this.history = [];
+                this.isOver = true;
+                this.totalWinnings = 0;
+                
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.updateBalanceDisplay();
+                this.setupSlider();
+            }
+
+            setupEventListeners() {
+                const betInput = document.getElementById('betAmount');
+                betInput.addEventListener('input', (e) => {
+                    this.betAmount = parseFloat(e.target.value) || 0;
+                    this.updateNetGain();
+                });
+            }
+
+            setupSlider() {
+                const track = document.getElementById('sliderTrack');
+                const pointer = document.getElementById('sliderPointer');
+                
+                let isDragging = false;
+                
+                const updateSlider = (clientX) => {
+                    const rect = track.getBoundingClientRect();
+                    const x = clientX - rect.left;
+                    const percentage = Math.max(0, Math.min(1, x / rect.width));
+                    const pointerPercent = percentage * 100;
+                    
+                    // Map to target number (0-99, max 99 to ensure at least 1% win chance)
+                    this.targetNumber = Math.max(0, Math.min(99, Math.floor(percentage * 100)));
+                    
+                    // Update pointer position
+                    pointer.style.left = `${pointerPercent}%`;
+                    
+                    // Update track colors - red is lose zone, green is win zone
+                    // The pointer position divides red (left) from green (right)
+                    track.style.background = `linear-gradient(to right, 
+                        #ff4757 0%, 
+                        #ff4757 ${pointerPercent}%, 
+                        #00d258 ${pointerPercent}%, 
+                        #00d258 100%
+                    )`;
+                    
+                    // Calculate multiplier based on target
+                    // Higher target = higher risk = higher multiplier
+                    // Win condition: roll > targetNumber
+                    const winChance = Math.max(1, (100 - this.targetNumber));
+                    const multiplier = (100 / winChance);
+                    
+                    // Update displays
+                    document.getElementById('rollOver').textContent = (this.targetNumber).toFixed(2);
+                    document.getElementById('winChance').textContent = `${winChance.toFixed(2)}%`;
+                    document.getElementById('winnings').textContent = multiplier.toFixed(2) + 'x';
+                    
+                    this.updateNetGain();
+                };
+                
+                pointer.addEventListener('mousedown', () => isDragging = true);
+                document.addEventListener('mousemove', (e) => {
+                    if (isDragging) updateSlider(e.clientX);
+                });
+                document.addEventListener('mouseup', () => isDragging = false);
+                
+                track.addEventListener('click', (e) => updateSlider(e.clientX));
+                
+                // Initialize at 50
+                updateSlider(track.getBoundingClientRect().left + track.getBoundingClientRect().width / 2);
+            }
+
+            updateNetGain() {
+                const multiplier = parseFloat(document.getElementById('winnings').textContent);
+                const netGain = this.betAmount * (multiplier - 1);
+                document.getElementById('netGain').value = netGain.toFixed(2);
+            }
+
+            rollDice() {
+                if (this.isRolling || this.betAmount > this.balance || this.betAmount <= 0) {
+                    if (this.betAmount > this.balance) {
+                        this.showNotification('Insufficient balance!', 'error');
+                    }
+                    return;
+                }
+
+                this.isRolling = true;
+                this.balance -= this.betAmount;
+                this.updateBalanceDisplay();
+                
+                const rollButton = document.getElementById('rollButton');
+                rollButton.disabled = true;
+                rollButton.textContent = 'Rolling...';
+                
+                const diceResult = document.getElementById('diceResult');
+                
+                // Generate result immediately
+                const result = Math.random() * 100;
+                
+                // Determine win/loss - win if result > targetNumber
+                const winChance = Math.max(1, (100 - this.targetNumber));
+                const won = result > this.targetNumber;
+                const multiplier = (100 / winChance);
+                
+                // Show roll result indicator on slider
+                this.showRollResult(result);
+                
+                // Show result
+                if (won) {
+                    const winAmount = this.betAmount * multiplier;
+                    this.balance += winAmount;
+                    this.totalWinnings += winAmount;
+                    this.updateBalanceDisplay();
+                    
+                    diceResult.textContent = `WIN! +$${(winAmount - this.betAmount).toFixed(2)}`;
+                    diceResult.style.color = '#00d258';
+                } else {
+                    diceResult.textContent = `LOSS! -$${this.betAmount.toFixed(2)}`;
+                    diceResult.style.color = '#ff4757';
+                }
+                
+                // Add to history
+                this.addToHistory(result, won, multiplier);
+                
+                // Reset button instantly
+                rollButton.disabled = false;
+                rollButton.textContent = 'Play';
+                this.isRolling = false;
+            }
+
+            showRollResult(result) {
+                const track = document.getElementById('sliderTrack');
+                const percentage = (result / 100) * 100;
+                
+                // Create or update result indicator
+                let resultIndicator = document.getElementById('rollResultIndicator');
+                if (!resultIndicator) {
+                    resultIndicator = document.createElement('div');
+                    resultIndicator.id = 'rollResultIndicator';
+                    resultIndicator.style.cssText = `
+                        position: absolute;
+                        width: 0;
+                        height: 0;
+                        border-left: 8px solid transparent;
+                        border-right: 8px solid transparent;
+                        border-bottom: 12px solid #fff;
+                        top: -16px;
+                        transform: translateX(-50%);
+                        z-index: 10;
+                        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+                    `;
+                    track.appendChild(resultIndicator);
+                }
+                
+                resultIndicator.style.left = `${percentage}%`;
+                resultIndicator.style.display = 'block';
+                
+                // Also show the number above the arrow
+                let resultNumber = document.getElementById('rollResultNumber');
+                if (!resultNumber) {
+                    resultNumber = document.createElement('div');
+                    resultNumber.id = 'rollResultNumber';
+                    resultNumber.style.cssText = `
+                        position: absolute;
+                        top: -40px;
+                        transform: translateX(-50%);
+                        background: #fff;
+                        color: #000;
+                        padding: 4px 8px;
+                        border-radius: 4px;
+                        font-size: 14px;
+                        font-weight: 700;
+                        z-index: 10;
+                        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                    `;
+                    track.appendChild(resultNumber);
+                }
+                
+                resultNumber.textContent = result.toFixed(2);
+                resultNumber.style.left = `${percentage}%`;
+                resultNumber.style.display = 'block';
+            }
+
+            hideRollResult() {
+                const resultIndicator = document.getElementById('rollResultIndicator');
+                const resultNumber = document.getElementById('rollResultNumber');
+                if (resultIndicator) resultIndicator.style.display = 'none';
+                if (resultNumber) resultNumber.style.display = 'none';
+            }
+
+            addToHistory(result, won, multiplier) {
+                const historyContainer = document.getElementById('history');
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                
+                historyItem.innerHTML = `
+                    <span class="history-number">${result.toFixed(2)}</span>
+                    <span class="history-multiplier">${won ? `${multiplier.toFixed(2)}x` : 'LOSS'}</span>
+                `;
+                
+                historyContainer.insertBefore(historyItem, historyContainer.firstChild);
+                
+                // Keep only last 10 items
+                while (historyContainer.children.length > 10) {
+                    historyContainer.removeChild(historyContainer.lastChild);
+                }
+            }
+
+            halveBet() {
+                this.betAmount = Math.max(0.01, this.betAmount / 2);
+                document.getElementById('betAmount').value = this.betAmount.toFixed(2);
+                this.updateNetGain();
+            }
+
+            doubleBet() {
+                this.betAmount = Math.min(this.balance, this.betAmount * 2);
+                document.getElementById('betAmount').value = this.betAmount.toFixed(2);
+                this.updateNetGain();
+            }
+
+            updateBalanceDisplay() {
+                const balanceElement = document.getElementById('balance');
+                if (balanceElement) {
+                    balanceElement.textContent = `$${this.balance.toFixed(2)}`;
+                }
+                localStorage.setItem('plinkoBalance', this.balance.toString());
+                localStorage.setItem('mainBalance', this.balance.toString());
+            }
+
+            showNotification(message, type = 'info') {
+                const notification = document.createElement('div');
+                notification.className = `message ${type}`;
+                notification.textContent = message;
+                notification.style.position = 'fixed';
+                notification.style.top = '80px';
+                notification.style.right = '20px';
+                notification.style.zIndex = '3000';
+                notification.style.minWidth = '250px';
+                notification.style.padding = '12px 16px';
+                notification.style.borderRadius = '4px';
+                notification.style.fontSize = '14px';
+                notification.style.fontWeight = '500';
+                
+                switch(type) {
+                    case 'success':
+                        notification.style.background = '#00d258';
+                        notification.style.color = '#fff';
+                        break;
+                    case 'error':
+                        notification.style.background = '#ff4757';
+                        notification.style.color = '#fff';
+                        break;
+                    default:
+                        notification.style.background = '#1a2c38';
+                        notification.style.color = '#fff';
+                        notification.style.border = '1px solid rgba(255,255,255,0.2)';
+                }
+                
+                document.body.appendChild(notification);
+                setTimeout(() => notification.remove(), 3000);
+            }
+        }
+
+        // Global functions
+        function halveBet() { game.halveBet(); }
+        function doubleBet() { game.doubleBet(); }
+        function rollDice() { game.rollDice(); }
+
+        // Initialize game
+        let game;
+        document.addEventListener('DOMContentLoaded', () => {
+            game = new DiceGame();
+        });
+    </script>
+</body>
+</html>

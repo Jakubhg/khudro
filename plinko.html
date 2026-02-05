@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plinko - KhudroBet</title>
+    <link rel="stylesheet" href="plinko.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="plinko-container">
+        <!-- Header -->
+        <header class="plinko-header">
+            <div class="header-left">
+                <button class="back-btn" onclick="window.location.href='index.html'">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back to Casino</span>
+                </button>
+            </div>
+            <div class="header-center">
+                <div class="logo">
+                    <img src="logo.png.png" alt="KhudroBet Logo" style="height: 20px; width: auto; margin-right: 5px;">
+                    <span class="logo-text">KHUROBET <small style="font-size: 0.6em; opacity: 0.7;">BETA</small></span>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="balance-display">
+                    <i class="fas fa-wallet"></i>
+                    <span id="balance">$1000.00</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Game Area -->
+        <main class="plinko-main">
+            <!-- Left Control Panel -->
+            <aside class="control-panel">
+                <div class="control-section">
+                    <!-- Manual/Auto Tabs -->
+                    <div class="tab-container">
+                        <button class="tab-btn active">Manual</button>
+                    </div>
+
+                    <!-- Manual Controls -->
+                    <div class="tab-content active" id="manual-controls">
+                        <!-- Bet Amount -->
+                        <div class="control-group">
+                            <label class="control-label">Bet Amount</label>
+                            <div class="bet-input-container">
+                                <div class="bet-input-wrapper">
+                                    <input type="text" class="bet-input" id="betAmount" value="1.00">
+                                    <span class="bet-currency">$</span>
+                                </div>
+                                <div class="bet-buttons">
+                                    <button class="bet-btn-half">1/2</button>
+                                    <button class="bet-btn-double">2x</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Difficulty -->
+                        <div class="control-group">
+                            <label class="control-label">Difficulty</label>
+                            <div class="select-container">
+                                <select class="control-select" id="difficulty">
+                                    <option value="low">Low</option>
+                                    <option value="medium">Medium</option>
+                                    <option value="high" selected>High</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        
+                        <!-- Bet Button -->
+                        <button class="bet-button" id="betButton">Bet</button>
+                        
+                        <!-- Provably Fair Section -->
+                        <div class="provably-fair-section">
+                            <h4 style="color: #00d258; margin-bottom: 12px; font-size: 14px;">Provably Fair</h4>
+                            <div class="control-group">
+                                <label class="control-label">Client Seed</label>
+                                <input type="text" class="seed-input" id="clientSeed" value="" readonly>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">Server Seed (Hashed)</label>
+                                <input type="text" class="seed-input" id="serverSeed" value="" readonly>
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">Game Hash (SHA-256)</label>
+                                <input type="text" class="seed-input" id="gameHash" value="" readonly style="font-size: 10px;">
+                            </div>
+                            <div class="control-group">
+                                <label class="control-label">Nonce</label>
+                                <input type="number" class="seed-input" id="nonce" value="0" readonly>
+                            </div>
+                            <button class="rotate-seed-btn" onclick="game.rotateSeeds()">Rotate Seeds</button>
+                        </div>
+                    </div>
+
+                    <!-- Removed Auto Controls -->
+                </div>
+            </aside>
+
+            <!-- Game Board -->
+            <section class="game-board">
+                <div class="plinko-canvas-container">
+                    <canvas id="plinkoCanvas"></canvas>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="plinko.js"></script>
+</body>
+</html>
