@@ -261,11 +261,43 @@ class PlinkoGame {
             else if (rollResult < 99.9) targetSlot = 17;
             else targetSlot = 18;
         } else if (this.difficulty === 'medium') {
-            targetSlot = Math.floor(rollResult / 5.26);
-            if (targetSlot > 18) targetSlot = 18;
+            // Weighted distribution for medium - make 100x and 50x rare
+            if (rollResult < 0.3) targetSlot = 0;           // 100x - 0.3%
+            else if (rollResult < 0.6) targetSlot = 1;      // 50x - 0.3%
+            else if (rollResult < 1.2) targetSlot = 2;      // 25x - 0.6%
+            else if (rollResult < 2.0) targetSlot = 3;      // 15x - 0.8%
+            else if (rollResult < 3.5) targetSlot = 4;      // 10x - 1.5%
+            else if (rollResult < 5.5) targetSlot = 5;      // 7x - 2.0%
+            else if (rollResult < 8.5) targetSlot = 6;      // 3x - 3.0%
+            else if (rollResult < 12.5) targetSlot = 7;     // 1.5x - 4.0%
+            else if (rollResult < 18.5) targetSlot = 8;     // 1x - 6.0%
+            else if (rollResult < 81.5) targetSlot = 9 + Math.floor(((rollResult - 18.5) / 63) * 2);  // 0.7x, 0.5x - 63%
+            else if (rollResult < 87.5) targetSlot = 11;    // 0.5x - 6.0%
+            else if (rollResult < 91.5) targetSlot = 12;    // 0.7x - 4.0%
+            else if (rollResult < 95.5) targetSlot = 13;    // 1.5x - 4.0%
+            else if (rollResult < 98.5) targetSlot = 14;    // 3x - 3.0%
+            else if (rollResult < 99.3) targetSlot = 15;    // 7x - 0.8%
+            else if (rollResult < 99.7) targetSlot = 16;   // 25x - 0.4%
+            else if (rollResult < 99.85) targetSlot = 17;  // 50x - 0.15%
+            else targetSlot = 18;                          // 100x - 0.15%
         } else {
-            targetSlot = Math.floor(rollResult / 5.26);
-            if (targetSlot > 18) targetSlot = 18;
+            // Low difficulty - weighted toward center, extreme multipliers very rare
+            if (rollResult < 0.1) targetSlot = 0;         // 10x - 0.1%
+            else if (rollResult < 0.3) targetSlot = 1;      // 5x - 0.2%
+            else if (rollResult < 0.7) targetSlot = 2;      // 3x - 0.4%
+            else if (rollResult < 1.5) targetSlot = 3;      // 2x - 0.8%
+            else if (rollResult < 3.0) targetSlot = 4;      // 1.5x - 1.5%
+            else if (rollResult < 5.5) targetSlot = 5;      // 1.2x - 2.5%
+            else if (rollResult < 9.0) targetSlot = 6;      // 1.1x - 3.5%
+            else if (rollResult < 15.0) targetSlot = 7;     // 1x - 6.0%
+            else if (rollResult < 85.0) targetSlot = 8 + Math.floor(((rollResult - 15.0) / 70) * 4);  // 1x, 1.2x - 70%
+            else if (rollResult < 91.0) targetSlot = 12;    // 1.5x - 6.0%
+            else if (rollResult < 94.5) targetSlot = 13;    // 2x - 3.5%
+            else if (rollResult < 97.0) targetSlot = 14;    // 3x - 2.5%
+            else if (rollResult < 98.5) targetSlot = 15;    // 5x - 1.5%
+            else if (rollResult < 99.3) targetSlot = 16;    // 10x - 0.8%
+            else if (rollResult < 99.7) targetSlot = 17;    // 20x - 0.4%
+            else targetSlot = 18;                          // 50x - 0.3%
         }
         
         const targetX = this.slots[targetSlot].x;

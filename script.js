@@ -47,11 +47,6 @@ function setupEventListeners() {
         btn.addEventListener('click', handleGameTab);
     });
 
-    // Game Cards
-    document.querySelectorAll('.game-card').forEach(card => {
-        card.addEventListener('click', handleGameClick);
-    });
-
     // User Actions
     document.getElementById('loginBtn')?.addEventListener('click', showLoginModal);
     document.getElementById('registerBtn')?.addEventListener('click', showRegisterModal);
@@ -99,8 +94,10 @@ function handleSidebarNavigation(e) {
     
     if (itemText === 'News') {
         showNewsSection();
-    } else if (itemText === 'Only on KhudroBet') {
+    } else if (itemText === 'Khudrobet Orgnals') {
         showGamesSection();
+    } else if (itemText === 'Pennis') {
+        showPennisSection();
     }
 }
 
@@ -109,6 +106,19 @@ function handleGameTab(e) {
     // Update active state
     document.querySelectorAll('.game-tab').forEach(btn => btn.classList.remove('active'));
     e.target.classList.add('active');
+    
+    // Get all games grids
+    const gamesGrids = document.querySelectorAll('.games-grid');
+    
+    // Hide all games grids
+    gamesGrids.forEach(grid => grid.style.display = 'none');
+    
+    // Show appropriate grid based on active tab
+    if (e.target.textContent === 'Khudrobetorginals') {
+        gamesGrids[0].style.display = 'grid'; // Originals games
+    } else if (e.target.textContent === 'Pennis') {
+        gamesGrids[1].style.display = 'grid'; // Pennis sports (empty)
+    }
 }
 
 // Game Click Handler
@@ -563,22 +573,99 @@ function showNotification(message, type = 'info') {
 
 // Section Display Functions
 function showNewsSection() {
-    const mainContent = document.querySelector('.main-content');
-    mainContent.innerHTML = `
+    // Hide all other sections
+    document.getElementById('casinoContent').style.display = 'none';
+    document.getElementById('pennisSection').style.display = 'none';
+    document.getElementById('rewardsSectionContainer').style.display = 'none';
+    
+    // Show news container
+    const newsContainer = document.getElementById('newsSectionContainer');
+    newsContainer.style.display = 'block';
+    newsContainer.innerHTML = `
         <div class="news-section">
             <h2 style="color: #ffd700; margin-bottom: 2rem; font-size: 2.5rem; text-align: center;">📰 KHUDRO NEWS 📰</h2>
             
-            <div style="text-align: center; padding: 4rem 2rem;">
-                <h3 style="color: rgba(255,255,255,0.5); font-size: 1.5rem; margin-bottom: 1rem;">no news</h3>
-                <p style="color: rgba(255,255,255,0.3); font-size: 1rem;">Check back later for updates and announcements</p>
+            <div class="news-grid">
+                <div class="news-card">
+                    <div class="news-date">Feb 6, 2026</div>
+                    <h3>🎨 UI Improvement</h3>
+                    <p>UI improvment</p>
+                </div>
+                <div class="news-card">
+                    <div class="news-date">Feb 6, 2026</div>
+                    <h3>🏓 Pennis Added</h3>
+                    <p>added pennis</p>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function showRewardsSection() {
+    // Hide all other sections
+    document.getElementById('casinoContent').style.display = 'none';
+    document.getElementById('pennisSection').style.display = 'none';
+    document.getElementById('newsSectionContainer').style.display = 'none';
+    
+    // Show rewards container
+    const rewardsContainer = document.getElementById('rewardsSectionContainer');
+    rewardsContainer.style.display = 'block';
+    rewardsContainer.innerHTML = `
+        <div class="rewards-section">
+            <h2 style="color: #ffd700; margin-bottom: 2rem; font-size: 2.5rem; text-align: center;">🎁 REWARDS 🎁</h2>
+            
+            <div class="rewards-grid">
+                <div class="reward-card active">
+                    <div class="reward-icon">💰</div>
+                    <h3>1% Rakeback</h3>
+                    <p>Get 1% of your total wagered amount back every week</p>
+                    <div class="reward-status">Active</div>
+                </div>
+                
+                <div class="reward-card soon">
+                    <div class="reward-icon">📅</div>
+                    <h3>Monthly Bonus</h3>
+                    <p>Exclusive monthly bonus based on your activity</p>
+                    <div class="reward-status">Coming Soon</div>
+                </div>
+                
+                <div class="reward-card soon">
+                    <div class="reward-icon">🗓️</div>
+                    <h3>Weekly Bonus</h3>
+                    <p>Claim your weekly bonus every 7 days</p>
+                    <div class="reward-status">Coming Soon</div>
+                </div>
+            </div>
+            
+            <div class="rewards-info">
+                <h3 style="color: #00d258; margin-bottom: 1rem;">How it works</h3>
+                <p style="color: rgba(255,255,255,0.7); line-height: 1.6;">
+                    Play games and earn rewards automatically. The more you play, the more you earn!
+                    Rakeback is calculated weekly and credited to your account every Monday.
+                </p>
             </div>
         </div>
     `;
 }
 
 function showGamesSection() {
-    // Reload the original games content
-    location.reload();
+    // Hide all other sections
+    document.getElementById('pennisSection').style.display = 'none';
+    document.getElementById('newsSectionContainer').style.display = 'none';
+    document.getElementById('rewardsSectionContainer').style.display = 'none';
+    
+    // Show casino content
+    document.getElementById('casinoContent').style.display = 'block';
+}
+
+function showPennisSection() {
+    // Hide all other sections
+    document.getElementById('casinoContent').style.display = 'none';
+    document.getElementById('newsSectionContainer').style.display = 'none';
+    document.getElementById('rewardsSectionContainer').style.display = 'none';
+    
+    // Show pennis section
+    document.getElementById('pennisSection').style.display = 'block';
 }
 
 // Launch Game - Direct interface like Stake.com
@@ -1148,4 +1235,367 @@ style.textContent = `
         border: 1px solid rgba(255,215,0,0.3);
     }
 `;
-document.head.appendChild(style);
+// Global variables for current bet
+let currentBetGame = null;
+let currentBetOption = null;
+let currentBetMultiplier = 1;
+
+// Initialize betting system
+function initBettingSystem() {
+    loadBetsFromStorage();
+    startCountdownTimers();
+    updateBettingPools();
+    checkGameResults();
+}
+
+// Load bets from localStorage
+function loadBetsFromStorage() {
+    const bets = JSON.parse(localStorage.getItem('khudroBets') || '{}');
+    
+    // Update UI for each game
+    Object.keys(bets).forEach(gameId => {
+        const gameBets = bets[gameId];
+        updateUserBetDisplay(gameId, gameBets);
+    });
+}
+
+// Start countdown timers for all games
+function startCountdownTimers() {
+    updateTimers();
+    setInterval(updateTimers, 1000);
+}
+
+// Update all countdown timers
+function updateTimers() {
+    const now = new Date().getTime();
+    
+    document.querySelectorAll('.countdown').forEach(timer => {
+        let endTime;
+        
+        if (timer.dataset.end) {
+            // Fixed end date (Game 1)
+            endTime = new Date(timer.dataset.end).getTime();
+        } else if (timer.dataset.hours) {
+            // Hours from page load (Game 2) - stored in localStorage for persistence
+            const gameStart = localStorage.getItem('game2StartTime');
+            if (!gameStart) {
+                localStorage.setItem('game2StartTime', now.toString());
+                endTime = now + (6 * 60 * 60 * 1000);
+            } else {
+                endTime = parseInt(gameStart) + (6 * 60 * 60 * 1000);
+            }
+        }
+        
+        const distance = endTime - now;
+        
+        if (distance < 0) {
+            timer.textContent = 'ENDED';
+            timer.style.color = '#ff4757';
+            const gameCard = timer.closest('.betting-game');
+            if (gameCard) {
+                const status = gameCard.querySelector('.betting-game-status');
+                if (status) {
+                    status.textContent = 'ENDED';
+                    status.classList.remove('live');
+                    status.classList.add('ended');
+                }
+            }
+        } else {
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            
+            if (days > 0) {
+                timer.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+            } else {
+                timer.textContent = `${hours}h ${minutes}m ${seconds}s`;
+            }
+        }
+    });
+}
+
+// Place bet function
+function placeBet(gameId, option, multiplier) {
+    console.log('placeBet called:', gameId, option, multiplier);
+    
+    try {
+        // Check if user already bet on this game
+        const bets = JSON.parse(localStorage.getItem('khudroBets') || '{}');
+        console.log('Existing bets:', bets);
+        
+        if (bets[gameId]) {
+            showNotification('You already placed a bet on this game!', 'error');
+            return;
+        }
+        
+        // Get game question from the match-teams div
+        const gameCard = document.getElementById(gameId);
+        console.log('Game card found:', gameCard);
+        
+        if (!gameCard) {
+            showNotification('Game not found!', 'error');
+            return;
+        }
+        
+        const matchTeams = gameCard.querySelector('.match-teams');
+        console.log('Match teams element:', matchTeams);
+        
+        if (!matchTeams) {
+            showNotification('Match info not found!', 'error');
+            return;
+        }
+        
+        const question = matchTeams.textContent;
+        console.log('Question:', question);
+        
+        // Set current bet details
+        currentBetGame = gameId;
+        currentBetOption = option;
+        currentBetMultiplier = multiplier;
+        
+        // Update modal
+        const modalQuestion = document.getElementById('betModalQuestion');
+        const modalSelection = document.getElementById('betSelection');
+        const modalOverlay = document.getElementById('betModalOverlay');
+        
+        console.log('Modal elements:', { modalQuestion, modalSelection, modalOverlay });
+        
+        if (modalQuestion) modalQuestion.textContent = question;
+        if (modalSelection) modalSelection.value = option.toUpperCase();
+        
+        const betInput = document.getElementById('betAmountInput');
+        if (betInput) betInput.value = '10';
+        
+        updatePotentialWin();
+        
+        // Show modal
+        if (modalOverlay) {
+            modalOverlay.classList.add('active');
+            console.log('Modal shown');
+        } else {
+            showNotification('Modal not found!', 'error');
+        }
+    } catch (error) {
+        console.error('Error in placeBet:', error);
+        showNotification('Error placing bet: ' + error.message, 'error');
+    }
+}
+
+// Update potential win amount
+function updatePotentialWin() {
+    const amount = parseFloat(document.getElementById('betAmountInput').value) || 0;
+    const win = amount * currentBetMultiplier;
+    document.getElementById('potentialWin').textContent = `$${win.toFixed(2)}`;
+}
+
+// Close bet modal
+function closeBetModal() {
+    document.getElementById('betModalOverlay').classList.remove('active');
+    currentBetGame = null;
+    currentBetOption = null;
+    currentBetMultiplier = 1;
+}
+
+// Confirm bet
+function confirmBet() {
+    const amount = parseFloat(document.getElementById('betAmountInput').value);
+    
+    if (!amount || amount <= 0) {
+        showNotification('Please enter a valid bet amount!', 'error');
+        return;
+    }
+    
+    // Check balance
+    const currentBalance = parseFloat(localStorage.getItem('mainBalance') || '1000');
+    if (amount > currentBalance) {
+        showNotification('Insufficient balance!', 'error');
+        return;
+    }
+    
+    // Deduct from balance
+    const newBalance = currentBalance - amount;
+    localStorage.setItem('mainBalance', newBalance.toString());
+    localStorage.setItem('plinkoBalance', newBalance.toString());
+    
+    // Update balance display
+    const balanceElement = document.getElementById('balance');
+    if (balanceElement) {
+        balanceElement.textContent = `$${newBalance.toFixed(2)}`;
+    }
+    
+    // Save bet to localStorage
+    const bets = JSON.parse(localStorage.getItem('khudroBets') || '{}');
+    bets[currentBetGame] = {
+        option: currentBetOption,
+        amount: amount,
+        multiplier: currentBetMultiplier,
+        potentialWin: amount * currentBetMultiplier,
+        placedAt: new Date().toISOString(),
+        settled: false
+    };
+    localStorage.setItem('khudroBets', JSON.stringify(bets));
+    
+    // Update pool
+    updatePool(currentBetGame, amount);
+    
+    // Update UI
+    updateUserBetDisplay(currentBetGame, bets[currentBetGame]);
+    
+    showNotification(`Bet placed! $${amount.toFixed(2)} on ${currentBetOption.toUpperCase()}`, 'success');
+    closeBetModal();
+}
+
+// Update betting pool display
+function updatePool(gameId, amount) {
+    const poolElement = document.getElementById(`pool-${gameId}`);
+    if (poolElement) {
+        const currentPool = parseFloat(poolElement.textContent) || 0;
+        const newPool = currentPool + amount;
+        poolElement.textContent = newPool.toFixed(2);
+        
+        // Save pool to localStorage
+        const pools = JSON.parse(localStorage.getItem('khudroPools') || '{}');
+        pools[gameId] = newPool;
+        localStorage.setItem('khudroPools', JSON.stringify(pools));
+    }
+}
+
+// Update all betting pools on load
+function updateBettingPools() {
+    const pools = JSON.parse(localStorage.getItem('khudroPools') || '{}');
+    Object.keys(pools).forEach(gameId => {
+        const poolElement = document.getElementById(`pool-${gameId}`);
+        if (poolElement) {
+            poolElement.textContent = pools[gameId].toFixed(2);
+        }
+    });
+}
+
+// Update user bet display
+function updateUserBetDisplay(gameId, betData) {
+    const container = document.getElementById(`user-bet-${gameId}`);
+    if (container && betData) {
+        if (betData.settled) {
+            if (betData.won) {
+                container.innerHTML = `<div class="bet-won">✅ WON! +$${betData.winnings.toFixed(2)}</div>`;
+            } else {
+                container.innerHTML = `<div class="bet-lost">❌ LOST -$${betData.amount.toFixed(2)}</div>`;
+            }
+        } else {
+            container.innerHTML = `<div class="bet-placed">💰 Bet: $${betData.amount.toFixed(2)} on ${betData.option.toUpperCase()} (${betData.multiplier}x)</div>`;
+        }
+    }
+}
+
+// Filter bets function
+function filterBets(filter) {
+    // Update active filter button
+    document.querySelectorAll('.pennis-filter').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+    
+    const bets = JSON.parse(localStorage.getItem('khudroBets') || '{}');
+    const games = ['game1', 'game2'];
+    
+    games.forEach(gameId => {
+        const gameCard = document.getElementById(gameId);
+        const betData = bets[gameId];
+        
+        if (!betData) {
+            // No bet placed - show only in 'all' filter
+            if (filter === 'all') {
+                gameCard.style.display = 'flex';
+            } else {
+                gameCard.style.display = 'none';
+            }
+            return;
+        }
+        
+        let show = false;
+        if (filter === 'all') {
+            show = true;
+        } else if (filter === 'active' && !betData.settled) {
+            show = true;
+        } else if (filter === 'won' && betData.settled && betData.won) {
+            show = true;
+        } else if (filter === 'lost' && betData.settled && !betData.won) {
+            show = true;
+        }
+        
+        gameCard.style.display = show ? 'flex' : 'none';
+    });
+}
+function checkGameResults() {
+    const now = new Date().getTime();
+    const bets = JSON.parse(localStorage.getItem('khudroBets') || '{}');
+    
+    // Game 1: Ends 31.12.2026, Winner: NO
+    const game1End = new Date('2026-12-31T23:59:59').getTime();
+    if (now > game1End && bets['game1'] && !bets['game1'].settled) {
+        settleBet('game1', 'no');
+    }
+    
+    // Game 2: Ends 6 hours from start, Winner: YES
+    const game2Start = localStorage.getItem('game2StartTime');
+    if (game2Start) {
+        const game2End = parseInt(game2Start) + (6 * 60 * 60 * 1000);
+        if (now > game2End && bets['game2'] && !bets['game2'].settled) {
+            settleBet('game2', 'yes');
+        }
+    }
+    
+    // Check periodically
+    setTimeout(checkGameResults, 5000);
+}
+
+// Settle a bet
+function settleBet(gameId, winningOption) {
+    const bets = JSON.parse(localStorage.getItem('khudroBets') || '{}');
+    const bet = bets[gameId];
+    
+    if (!bet || bet.settled) return;
+    
+    bet.settled = true;
+    
+    if (bet.option === winningOption) {
+        // Winner!
+        bet.won = true;
+        bet.winnings = bet.amount * bet.multiplier;
+        
+        // Add winnings to balance
+        const currentBalance = parseFloat(localStorage.getItem('mainBalance') || '1000');
+        const newBalance = currentBalance + bet.winnings;
+        localStorage.setItem('mainBalance', newBalance.toString());
+        localStorage.setItem('plinkoBalance', newBalance.toString());
+        
+        // Update balance display
+        const balanceElement = document.getElementById('balance');
+        if (balanceElement) {
+            balanceElement.textContent = `$${newBalance.toFixed(2)}`;
+        }
+        
+        showNotification(`🎉 Bet WON! You won $${bet.winnings.toFixed(2)}!`, 'success');
+    } else {
+        // Loser
+        bet.won = false;
+        showNotification('Bet lost. Better luck next time!', 'info');
+    }
+    
+    // Save updated bet
+    bets[gameId] = bet;
+    localStorage.setItem('khudroBets', JSON.stringify(bets));
+}
+
+// Event listener for bet amount input
+document.addEventListener('DOMContentLoaded', function() {
+    const betAmountInput = document.getElementById('betAmountInput');
+    if (betAmountInput) {
+        betAmountInput.addEventListener('input', updatePotentialWin);
+    }
+    
+    // Initialize betting system
+    initBettingSystem();
+});
+
