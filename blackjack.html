@@ -441,6 +441,62 @@
             50% { transform: translateY(-30px) scale(1.2); }
             100% { transform: translateY(0) scale(1); }
         }
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            .blackjack-main {
+                flex-direction: column;
+            }
+            
+            .blackjack-control-panel {
+                width: 100%;
+                max-height: 200px;
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                padding: 15px;
+                gap: 15px;
+            }
+            
+            .game-table {
+                min-width: auto;
+                width: 95%;
+                padding: 20px;
+                border-radius: 12px;
+            }
+            
+            .card {
+                width: 60px;
+                height: 90px;
+                font-size: 20px;
+            }
+            
+            .cards-container {
+                min-height: 100px;
+                gap: 5px;
+            }
+            
+            .score-display {
+                font-size: 14px;
+                padding: 6px 12px;
+            }
+            
+            .action-buttons {
+                gap: 8px;
+            }
+            
+            .action-btn {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+            
+            .bet-controls {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .control-group {
+                gap: 8px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -690,7 +746,18 @@
 
             updateScores() {
                 const playerScore = this.calculateScore(this.playerCards);
-                const dealerScore = this.calculateScore(this.dealerCards);
+                
+                // During gameplay, only count the first dealer card (second is hidden)
+                let dealerScore = 0;
+                if (this.gameActive) {
+                    // Only count visible cards during gameplay
+                    if (this.dealerCards.length > 0) {
+                        dealerScore = this.calculateScore([this.dealerCards[0]]);
+                    }
+                } else {
+                    // Game ended, count all cards
+                    dealerScore = this.calculateScore(this.dealerCards);
+                }
                 
                 document.getElementById('playerScore').textContent = `Score: ${playerScore}`;
                 document.getElementById('dealerScore').textContent = `Score: ${dealerScore}`;
@@ -958,5 +1025,18 @@
             game = new BlackjackGame();
         });
     </script>
+    <!--Start of Tawk.to Script-->
+    <script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    (function(){
+    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+    s1.async=true;
+    s1.src='https://embed.tawk.to/69471778470ae5197cd8353f/1jcur7ccc';
+    s1.charset='UTF-8';
+    s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+    })();
+    </script>
+    <!--End of Tawk.to Script-->
 </body>
 </html>

@@ -1329,18 +1329,119 @@ body {
 
 /* Responsive */
 @media (max-width: 768px) {
-    .betting-odds {
-        grid-template-columns: 1fr;
+    .app-container {
+        min-height: 100vh;
     }
     
-    .betting-game-header {
+    .header {
+        padding: 10px 15px;
+        height: 50px;
+    }
+    
+    .logo-text {
+        font-size: 16px;
+    }
+    
+    .balance-display {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+    
+    .main-layout {
         flex-direction: column;
-        gap: 12px;
+    }
+    
+    .sidebar {
+        width: 100%;
+        height: auto;
+        max-height: 60px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        flex-direction: row;
+        padding: 8px 10px;
+        gap: 5px;
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .sidebar-section {
+        flex-direction: row;
+        gap: 5px;
+        margin-bottom: 0;
+    }
+    
+    .sidebar-header {
+        display: none;
+    }
+    
+    .sidebar-item {
+        padding: 8px 12px;
+        min-width: auto;
+        white-space: nowrap;
+        font-size: 13px;
+    }
+    
+    .main-content {
+        padding: 10px;
+    }
+    
+    .promo-banners {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .promo-banner {
+        min-width: 100%;
+        padding: 12px;
+    }
+    
+    .games-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    
+    .game-image {
+        height: 100px;
+    }
+    
+    .pennis-header {
+        flex-direction: column;
         align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .pennis-filters {
+        width: 100%;
+        overflow-x: auto;
+    }
+    
+    .pennis-match {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .match-odds {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .odds-btn {
+        flex: 1;
+    }
+    
+    .news-grid {
+        grid-template-columns: 1fr;
     }
     
     .rewards-grid {
         grid-template-columns: 1fr;
+    }
+    
+    .bet-modal {
+        width: 90%;
+        max-width: 350px;
+        padding: 20px;
     }
 }
 
