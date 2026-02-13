@@ -188,6 +188,19 @@
             font-size: 20px;
             border: 2px solid #ffd700;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-back::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%);
+            z-index: 1;
         }
 
         .card-back::after {
@@ -196,6 +209,15 @@
             font-size: 12px;
             opacity: 0.3;
             letter-spacing: 2px;
+            z-index: 2;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .card-back > div {
+            position: relative;
+            z-index: 3;
         }
 
         .score-display {
@@ -603,6 +625,7 @@
                 this.dealerCards = [];
                 this.playerCards = [];
                 this.gameActive = false;
+                this.dealerHiddenCard = true; // Track if dealer has hidden card
                 this.history = [];
                 
                 this.init();
@@ -676,6 +699,7 @@
                 }
 
                 this.gameActive = true;
+                this.dealerHiddenCard = true; // Reset hidden card flag
                 this.balance -= this.betAmount;
                 this.updateBalanceDisplay();
                 
@@ -691,9 +715,9 @@
                 
                 // Deal initial cards
                 setTimeout(() => this.dealCard('player'), 100);
-                setTimeout(() => this.dealCard('dealer', true), 300);
+                setTimeout(() => this.dealCard('dealer', false), 300);  // First dealer card face up
                 setTimeout(() => this.dealCard('player'), 500);
-                setTimeout(() => this.dealCard('dealer'), 700);
+                setTimeout(() => this.dealCard('dealer', true), 700);   // Second dealer card HIDDEN
                 setTimeout(() => {
                     if (!this.checkForBlackjack()) {
                         this.showActionButtons();
@@ -715,7 +739,8 @@
                 } else {
                     this.dealerCards.push(card);
                     if (hidden) {
-                        this.displayCard({ suit: '?', value: '?' }, 'dealerCards', true);
+                        // Store the actual card but display a hidden card
+                        this.displayCard(card, 'dealerCards', true);
                     } else {
                         this.displayCard(card, 'dealerCards');
                     }
@@ -731,7 +756,12 @@
                 
                 if (hidden) {
                     cardElement.className += ' card-back';
-                    cardElement.textContent = '?';
+                    cardElement.innerHTML = `
+                        <div style="font-size: 24px; color: #ffd700;">?</div>
+                    `;
+                    // Store the actual card data for later use
+                    cardElement.dataset.actualSuit = card.suit;
+                    cardElement.dataset.actualValue = card.value;
                 } else {
                     const isRed = card.suit === '♥' || card.suit === '♦';
                     cardElement.className += isRed ? ' red' : ' black';
@@ -747,15 +777,15 @@
             updateScores() {
                 const playerScore = this.calculateScore(this.playerCards);
                 
-                // During gameplay, only count the first dealer card (second is hidden)
+                // Calculate dealer score based on hidden card state
                 let dealerScore = 0;
-                if (this.gameActive) {
-                    // Only count visible cards during gameplay
+                if (this.dealerHiddenCard) {
+                    // Dealer has hidden card - only count first visible card
                     if (this.dealerCards.length > 0) {
                         dealerScore = this.calculateScore([this.dealerCards[0]]);
                     }
                 } else {
-                    // Game ended, count all cards
+                    // No hidden card - count all cards
                     dealerScore = this.calculateScore(this.dealerCards);
                 }
                 
@@ -781,6 +811,7 @@
                     this.hideActionButtons();
                     
                     // Reveal dealer's hidden card
+                    this.dealerHiddenCard = false;
                     const dealerCardsContainer = document.getElementById('dealerCards');
                     dealerCardsContainer.innerHTML = '';
                     this.dealerCards.forEach(card => this.displayCard(card, 'dealerCards'));
@@ -847,9 +878,13 @@
                 this.hideActionButtons();
                 
                 // Reveal hidden dealer card
+                this.dealerHiddenCard = false;
                 const dealerCardsContainer = document.getElementById('dealerCards');
                 dealerCardsContainer.innerHTML = '';
                 this.dealerCards.forEach(card => this.displayCard(card, 'dealerCards'));
+                
+                // Update scores to show all dealer cards
+                this.updateScores();
                 
                 // Dealer plays
                 this.dealerPlay();
@@ -862,6 +897,8 @@
                     if (dealerScore < 17) {
                         setTimeout(() => {
                             this.dealCard('dealer');
+                            // Update scores after each new card
+                            this.updateScores();
                             setTimeout(dealerPlay, 500);
                         }, 500);
                     } else {
@@ -888,6 +925,9 @@
             }
 
             endGame() {
+                this.gameActive = false;
+                this.dealerHiddenCard = false; // Ensure no hidden cards at game end
+                
                 const playerScore = this.calculateScore(this.playerCards);
                 const dealerScore = this.calculateScore(this.dealerCards);
                 
@@ -925,7 +965,6 @@
                 this.addToHistory(result);
                 
                 // Reset game
-                this.gameActive = false;
                 const dealButton = document.getElementById('dealButton');
                 dealButton.disabled = false;
                 dealButton.textContent = 'DEAL CARDS';

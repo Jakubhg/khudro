@@ -3,75 +3,317 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maintenance</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            overflow: hidden;
-            height: 100vh;
-            position: relative;
-            background: black;
-        }
-
-        .video-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-        }
-
-        .video-container video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: bottom;
-            transform: scale(1.2);
-            filter: brightness(0.3);
-        }
-
-        .maintenance-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            color: #00d258;
-            text-shadow: 0 0 20px rgba(0, 210, 88, 0.5), 2px 2px 4px rgba(0,0,0,0.8);
-            z-index: 1;
-        }
-
-        .maintenance-title {
-            font-size: 60px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            font-family: Arial, sans-serif;
-        }
-
-        .maintenance-subtitle {
-            font-size: 18px;
-            font-family: Arial, sans-serif;
-        }
-    </style>
+    <title>KhudroBet - Original Casino Games</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div class="video-container">
-        <video autoplay muted loop playsinline>
+    <!-- Video Background -->
+    <div class="video-background">
+        <video autoplay muted loop id="bgVideo">
             <source src="VID_20260101_220022.mp4" type="video/mp4">
         </video>
+        <div class="video-overlay"></div>
     </div>
 
-    <div class="maintenance-text">
-        <h1 class="maintenance-title">Maintenance</h1>
-        <p class="maintenance-subtitle">Holly shit we are working to make KhudroBet working again!</p>
+    <!-- Main Layout Container -->
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <div class="nav-tabs">
+                    <button class="nav-tab active">Casino</button>
+                </div>
+            </div>
+            
+            <div class="header-center">
+                <div class="logo">
+                    <img src="logo.png.png" alt="KhudroBet Logo" style="height: 20px; width: auto; margin-right: 5px;">
+                    <span class="logo-text">KHUROBET <small style="font-size: 0.6em; opacity: 0.7;">BETA</small></span>
+                </div>
+            </div>
+
+            <div class="header-right">
+                <div class="balance-display">
+                    <i class="fas fa-wallet"></i>
+                    <span id="balance">$1000.00</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <div class="main-layout">
+            <!-- Left Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-section">
+                    <div class="sidebar-item" onclick="showGamesSection()">
+                        <i class="fas fa-gem"></i>
+                        <span>Khudrobet Orgnals</span>
+                    </div>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-header">Sports</div>
+                    <div class="sidebar-item" onclick="showPennisSection()">
+                        <i class="fas fa-football-ball"></i>
+                        <span>Pennis</span>
+                    </div>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-header">Other</div>
+                    <div class="sidebar-item" onclick="showNewsSection()">
+                        <i class="fas fa-newspaper"></i>
+                        <span>News</span>
+                    </div>
+                    <div class="sidebar-item disabled" style="opacity: 0.5; cursor: not-allowed;">
+                        <i class="fas fa-trophy"></i>
+                        <span>Leaderboard <small style="color: #00d258;">Soon</small></span>
+                    </div>
+                    <div class="sidebar-item disabled" style="opacity: 0.5; cursor: not-allowed;">
+                        <i class="fas fa-wallet"></i>
+                        <span>Deposit <small style="color: #00d258;">Soon</small></span>
+                    </div>
+                    <div class="sidebar-item disabled" style="opacity: 0.5; cursor: not-allowed;">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span>Withdrawals <small style="color: #00d258;">Soon</small></span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <!-- Casino Content Container -->
+                <div id="casinoContent">
+                    <!-- Promotional Banners -->
+                    <div class="promo-banners">
+                        <div class="promo-banner">
+                            <div class="promo-content">
+                                <h3>Vilx is such a fat pig!</h3>
+                                <p>Vilx is banned our servers cant handle his weight!</p>
+                            </div>
+                        </div>
+                        <div class="promo-banner">
+                            <div class="promo-content">
+                                <h3>Khudrobet is Live!</h3>
+                                <p>Exclusive VIP benefits</p>
+                            </div>
+                        </div>
+                        <div class="promo-banner">
+                            <div class="promo-content">
+                                <h3>TinaAhmed our new CEO!</h3>
+                                <p>enjoy instant cahsout and depoists!</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Search Bar -->
+                    <div class="search-section">
+                        <div class="search-bar">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="Search for a game">
+                        </div>
+                    </div>
+
+                    <!-- Game Category Tabs -->
+                    <div class="game-tabs">
+                        <button class="game-tab active">Khudrobetorginals</button>
+                        <button class="game-tab">Pennis</button>
+                    </div>
+
+                    <!-- Games Grid -->
+                    <div class="games-grid">
+                        <!-- Khudrobet Originals Games -->
+                        <div class="game-card" data-game="dice" onclick="window.location.href='dice.html'">
+                            <div class="game-image">
+                                <img src="dice icon.png" alt="Dice Game" style="width: 100%; height: 100%; object-fit: contain; padding: 5px;">
+                            </div>
+                            <div class="game-info">
+                                <h4>Dice</h4>
+                            </div>
+                        </div>
+
+                        <div class="game-card" data-game="blackjack" onclick="window.location.href='blackjack.html'">
+                            <div class="game-image">
+                                <img src="blackjck icon.png" alt="Blackjack Game" style="width: 100%; height: 100%; object-fit: contain; padding: 5px;">
+                            </div>
+                            <div class="game-info">
+                                <h4>Blackjack</h4>
+                            </div>
+                        </div>
+
+                        <div class="game-card" data-game="plinko" onclick="window.location.href='plinko.html'">
+                            <div class="game-image">
+                                <img src="plinkoicon.png.png" alt="Plinko Game" style="width: 100%; height: 100%; object-fit: contain; padding: 5px;">
+                            </div>
+                            <div class="game-info">
+                                <h4>Plinko</h4>
+                            </div>
+                        </div>
+
+                        <div class="game-card disabled" data-game="crosskhudro" onclick="return false;">
+                            <div class="game-image">
+                                <img src="comingsoon.png.png" alt="CrossKhudro Coming Soon" style="width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%) opacity(0.7);">
+                            </div>
+                            <div class="game-info">
+                                <h4>CrossTheKhudro</h4>
+                                <p style="color: rgba(255,255,255,0.5); font-size: 12px;">✝️ Coming Soon</p>
+                            </div>
+                        </div>
+
+                        <div class="game-card disabled" data-game="keno" onclick="return false;">
+                            <div class="game-image">
+                                <img src="comingsoon.png.png" alt="Keno Coming Soon" style="width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%) opacity(0.7);">
+                            </div>
+                            <div class="game-info">
+                                <h4>Keno</h4>
+                                <p style="color: rgba(255,255,255,0.5); font-size: 12px;">🎰 Coming Soon</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pennis Sports Betting Grid (Empty) -->
+                <div class="games-grid" id="pennisSportsGrid" style="display: none;">
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: rgba(255,255,255,0.5);">
+                        <i class="fas fa-football-ball" style="font-size: 48px; margin-bottom: 20px; display: block;"></i>
+                        <h3 style="margin-bottom: 10px;">No Sports Available</h3>
+                        <p>Sports betting coming soon!</p>
+                    </div>
+                </div>
+
+                <!-- Pennis Sports Section - Stake Style -->
+                <div class="pennis-section" id="pennisSection" style="display: none;">
+                    <div class="pennis-header">
+                        <h2>Specials</h2>
+                        <div class="pennis-filters">
+                            <button class="pennis-filter active" onclick="filterBets('all')">All</button>
+                            <button class="pennis-filter" onclick="filterBets('active')">Active</button>
+                            <button class="pennis-filter" onclick="filterBets('won')">Won</button>
+                            <button class="pennis-filter" onclick="filterBets('lost')">Lost</button>
+                        </div>
+                    </div>
+                    
+                    <div class="pennis-list">
+                        <!-- Game 1 -->
+                        <div class="pennis-match" id="game1">
+                            <div class="match-info">
+                                <span class="match-league">POPULAR</span>
+                                <span class="match-time">Ends 31.12.2026</span>
+                            </div>
+                            <div class="match-teams">Will Khudro comeback to Tina?</div>
+                            <div class="match-odds">
+                                <button class="odds-btn" onclick="placeBet('game1', 'yes', 100)">
+                                    <span class="odds-label">YES</span>
+                                    <span class="odds-value">100.00</span>
+                                </button>
+                                <button class="odds-btn" onclick="placeBet('game1', 'no', 0.1)">
+                                    <span class="odds-label">NO</span>
+                                    <span class="odds-value">0.10</span>
+                                </button>
+                            </div>
+                            <div class="match-pool" id="pool-game1">Pool: $0.00</div>
+                            <div class="user-bet-info" id="user-bet-game1"></div>
+                        </div>
+
+                        <!-- Game 2 -->
+                        <div class="pennis-match" id="game2">
+                            <div class="match-info">
+                                <span class="match-league">POPULAR</span>
+                                <span class="match-time">Ends in 6h</span>
+                            </div>
+                            <div class="match-teams">Will Aiden stream today?</div>
+                            <div class="match-odds">
+                                <button class="odds-btn" onclick="placeBet('game2', 'yes', 2)">
+                                    <span class="odds-label">YES</span>
+                                    <span class="odds-value">2.00</span>
+                                </button>
+                                <button class="odds-btn" onclick="placeBet('game2', 'no', 2)">
+                                    <span class="odds-label">NO</span>
+                                    <span class="odds-value">2.00</span>
+                                </button>
+                            </div>
+                            <div class="match-pool" id="pool-game2">Pool: $0.00</div>
+                            <div class="user-bet-info" id="user-bet-game2"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- News Section Container -->
+                <div id="newsSectionContainer" style="display: none;"></div>
+
+                <!-- Rewards Section Container -->
+                <div id="rewardsSectionContainer" style="display: none;"></div>
+            </main>
+        </div>
     </div>
 
+    <!-- Modal Container -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Modal Title</h3>
+                <button class="modal-close" id="modalClose">×</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                Modal content
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Widget -->
+    <div class="chat-widget" id="chatWidget">
+        <div class="chat-header" onclick="toggleChat()">
+            <i class="fas fa-comments"></i>
+            <span>Chat</span>
+            <i class="fas fa-chevron-up" id="chatToggleIcon"></i>
+        </div>
+        <div class="chat-body" id="chatBody">
+            <div class="chat-messages" id="chatMessages">
+                <div class="chat-message system">
+                    <div class="message-content">Welcome to KhudroBet Chat!</div>
+                </div>
+            </div>
+            <div class="chat-input-container">
+                <input type="text" id="chatInput" placeholder="Type a message..." maxlength="200">
+                <button onclick="sendMessage()" id="chatSendBtn">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bet Modal -->
+    <div class="bet-modal-overlay" id="betModalOverlay">
+        <div class="bet-modal">
+            <div class="bet-modal-header">
+                <h3>Place Your Bet</h3>
+                <p id="betModalQuestion">Will it happen?</p>
+            </div>
+            <div class="bet-input-group">
+                <label>Your Selection</label>
+                <div class="bet-input-wrapper">
+                    <input type="text" id="betSelection" readonly value="YES">
+                </div>
+            </div>
+            <div class="bet-input-group">
+                <label>Bet Amount</label>
+                <div class="bet-input-wrapper">
+                    <span>$</span>
+                    <input type="number" id="betAmountInput" value="10" min="1" step="1">
+                </div>
+            </div>
+            <div class="bet-potential-win">
+                <label>Potential Win</label>
+                <div class="win-amount" id="potentialWin">$1000.00</div>
+            </div>
+            <div class="bet-modal-buttons">
+                <button class="bet-btn-cancel" onclick="closeBetModal()">Cancel</button>
+                <button class="bet-btn-confirm" onclick="confirmBet()">Place Bet</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
     <!--Start of Tawk.to Script-->
     <script type="text/javascript">
     var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();

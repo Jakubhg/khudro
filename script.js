@@ -4,10 +4,13 @@
 let currentUser = null;
 let userBalance = 0;
 let currentGame = null;
+let chatMessages = [];
+let isChatMinimized = false;
 
 // Initialize Application
 document.addEventListener('DOMContentLoaded', function() {
     initializeApp();
+    initializeChat();
 });
 
 function initializeApp() {
@@ -15,11 +18,24 @@ function initializeApp() {
     initializeVideoBackground();
     updatePlayerCounts();
     
-    // Load balance from localStorage or use demo balance
-    const savedBalance = localStorage.getItem('mainBalance') || localStorage.getItem('plinkoBalance');
-    currentUser = { username: 'Demo Player', balance: savedBalance ? parseFloat(savedBalance) : 1000 };
+    // Auto-login as 'user' as requested
+    autoLoginAsUser();
+}
+
+function autoLoginAsUser() {
+    // Set default user as 'user' for everyone
+    currentUser = { username: 'user', balance: 1000 };
     userBalance = currentUser.balance;
+    
+    // Load saved balance if exists
+    const savedBalance = localStorage.getItem('mainBalance') || localStorage.getItem('plinkoBalance');
+    if (savedBalance) {
+        userBalance = parseFloat(savedBalance);
+        currentUser.balance = userBalance;
+    }
+    
     updateBalanceDisplay();
+    showNotification('Logged in as user', 'info');
 }
 
 // Video Background Setup
@@ -947,30 +963,30 @@ function showRegisterModal() {
 
 function handleLogin(event) {
     event.preventDefault();
-    const username = document.getElementById('loginUsername').value;
+    const username = document.getElementById('loginUsername').value || 'user';
     const password = document.getElementById('loginPassword').value;
     
-    // Simulate login
-    currentUser = { username, balance: 1000 };
+    // Always login as 'user' regardless of input
+    currentUser = { username: 'user', balance: 1000 };
     userBalance = 1000;
     
     updateBalanceDisplay();
-    showNotification(`Welcome back, ${username}!`, 'success');
+    showNotification('Welcome back, user!', 'success');
     closeModal();
 }
 
 function handleRegister(event) {
     event.preventDefault();
-    const username = document.getElementById('regUsername').value;
+    const username = document.getElementById('regUsername').value || 'user';
     const email = document.getElementById('regEmail').value;
     const password = document.getElementById('regPassword').value;
     
-    // Simulate registration
-    currentUser = { username, email, balance: 500 };
+    // Always register as 'user' regardless of input
+    currentUser = { username: 'user', email: email || 'user@example.com', balance: 500 };
     userBalance = 500;
     
     updateBalanceDisplay();
-    showNotification(`Welcome to KhudroOrginals, ${username}! $500 bonus added!`, 'success');
+    showNotification('Welcome to Khudro, user! $500 bonus added!', 'success');
     closeModal();
 }
 
@@ -1107,7 +1123,13 @@ function rotateAlertMessages() {
 // Update Functions
 function updateBalance(amount) {
     userBalance += amount;
+    if (currentUser) {
+        currentUser.balance = userBalance;
+    }
     updateBalanceDisplay();
+    // Save to localStorage
+    localStorage.setItem('mainBalance', userBalance.toString());
+    localStorage.setItem('plinkoBalance', userBalance.toString());
 }
 
 function updateBalanceDisplay() {
@@ -1243,7 +1265,7 @@ let currentBetMultiplier = 1;
 // Initialize betting system
 function initBettingSystem() {
     loadBetsFromStorage();
-    startCountdownTimers();
+    updateTimers();
     updateBettingPools();
     checkGameResults();
 }
@@ -1259,70 +1281,53 @@ function loadBetsFromStorage() {
     });
 }
 
-// Start countdown timers for all games
-function startCountdownTimers() {
-    updateTimers();
-    setInterval(updateTimers, 1000);
-}
-
-// Update all countdown timers
+// Update timer display
 function updateTimers() {
     const now = new Date().getTime();
     
-    document.querySelectorAll('.countdown').forEach(timer => {
-        let endTime;
+    // Initialize game2 start time if not exists
+    if (!localStorage.getItem('game2StartTime')) {
+        localStorage.setItem('game2StartTime', now.toString());
+    }
+    
+    // Game 2 timer
+    const game2Start = localStorage.getItem('game2StartTime');
+    if (game2Start) {
+        const game2End = parseInt(game2Start) + (6 * 60 * 60 * 1000);
+        const timeLeft = game2End - now;
         
-        if (timer.dataset.end) {
-            // Fixed end date (Game 1)
-            endTime = new Date(timer.dataset.end).getTime();
-        } else if (timer.dataset.hours) {
-            // Hours from page load (Game 2) - stored in localStorage for persistence
-            const gameStart = localStorage.getItem('game2StartTime');
-            if (!gameStart) {
-                localStorage.setItem('game2StartTime', now.toString());
-                endTime = now + (6 * 60 * 60 * 1000);
-            } else {
-                endTime = parseInt(gameStart) + (6 * 60 * 60 * 1000);
-            }
-        }
-        
-        const distance = endTime - now;
-        
-        if (distance < 0) {
-            timer.textContent = 'ENDED';
-            timer.style.color = '#ff4757';
-            const gameCard = timer.closest('.betting-game');
-            if (gameCard) {
-                const status = gameCard.querySelector('.betting-game-status');
-                if (status) {
-                    status.textContent = 'ENDED';
-                    status.classList.remove('live');
-                    status.classList.add('ended');
+        if (timeLeft > 0) {
+            const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+            
+            const timeElement = document.querySelector('#game2 .match-time');
+            if (timeElement) {
+                if (hours > 0) {
+                    timeElement.textContent = `Ends in ${hours}h ${minutes}m`;
+                } else if (minutes > 0) {
+                    timeElement.textContent = `Ends in ${minutes}m ${seconds}s`;
+                } else {
+                    timeElement.textContent = `Ends in ${seconds}s`;
                 }
             }
         } else {
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-            
-            if (days > 0) {
-                timer.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-            } else {
-                timer.textContent = `${hours}h ${minutes}m ${seconds}s`;
+            const timeElement = document.querySelector('#game2 .match-time');
+            if (timeElement) {
+                timeElement.textContent = 'Ended';
             }
         }
-    });
+    }
+    
+    // Update every second
+    setTimeout(updateTimers, 1000);
 }
 
 // Place bet function
 function placeBet(gameId, option, multiplier) {
-    console.log('placeBet called:', gameId, option, multiplier);
-    
     try {
         // Check if user already bet on this game
         const bets = JSON.parse(localStorage.getItem('khudroBets') || '{}');
-        console.log('Existing bets:', bets);
         
         if (bets[gameId]) {
             showNotification('You already placed a bet on this game!', 'error');
@@ -1331,7 +1336,6 @@ function placeBet(gameId, option, multiplier) {
         
         // Get game question from the match-teams div
         const gameCard = document.getElementById(gameId);
-        console.log('Game card found:', gameCard);
         
         if (!gameCard) {
             showNotification('Game not found!', 'error');
@@ -1339,46 +1343,33 @@ function placeBet(gameId, option, multiplier) {
         }
         
         const matchTeams = gameCard.querySelector('.match-teams');
-        console.log('Match teams element:', matchTeams);
         
         if (!matchTeams) {
             showNotification('Match info not found!', 'error');
             return;
         }
         
-        const question = matchTeams.textContent;
-        console.log('Question:', question);
+        const question = matchTeams.textContent.trim();
         
-        // Set current bet details
+        // Store bet data for modal
         currentBetGame = gameId;
         currentBetOption = option;
         currentBetMultiplier = multiplier;
         
-        // Update modal
-        const modalQuestion = document.getElementById('betModalQuestion');
-        const modalSelection = document.getElementById('betSelection');
+        // Show bet modal
         const modalOverlay = document.getElementById('betModalOverlay');
-        
-        console.log('Modal elements:', { modalQuestion, modalSelection, modalOverlay });
-        
-        if (modalQuestion) modalQuestion.textContent = question;
-        if (modalSelection) modalSelection.value = option.toUpperCase();
-        
-        const betInput = document.getElementById('betAmountInput');
-        if (betInput) betInput.value = '10';
-        
-        updatePotentialWin();
-        
-        // Show modal
         if (modalOverlay) {
+            document.getElementById('betModalQuestion').textContent = question;
+            document.getElementById('betSelection').textContent = option.toUpperCase();
+            document.getElementById('betAmountInput').value = '10';
+            updatePotentialWin();
             modalOverlay.classList.add('active');
-            console.log('Modal shown');
         } else {
             showNotification('Modal not found!', 'error');
         }
     } catch (error) {
         console.error('Error in placeBet:', error);
-        showNotification('Error placing bet: ' + error.message, 'error');
+        showNotification('Error placing bet', 'error');
     }
 }
 
@@ -1527,6 +1518,8 @@ function filterBets(filter) {
         gameCard.style.display = show ? 'flex' : 'none';
     });
 }
+
+// Check game results
 function checkGameResults() {
     const now = new Date().getTime();
     const bets = JSON.parse(localStorage.getItem('khudroBets') || '{}');
@@ -1598,4 +1591,137 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize betting system
     initBettingSystem();
 });
+
+// Chat System Functions
+function initializeChat() {
+    // Load chat messages from localStorage
+    const savedMessages = localStorage.getItem('khudroChatMessages');
+    if (savedMessages) {
+        chatMessages = JSON.parse(savedMessages);
+        displayChatMessages();
+    }
+    
+    // Set up enter key for chat input
+    const chatInput = document.getElementById('chatInput');
+    if (chatInput) {
+        chatInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    }
+}
+
+function toggleChat() {
+    const chatWidget = document.getElementById('chatWidget');
+    const chatToggleIcon = document.getElementById('chatToggleIcon');
+    
+    isChatMinimized = !isChatMinimized;
+    
+    if (isChatMinimized) {
+        chatWidget.classList.add('minimized');
+    } else {
+        chatWidget.classList.remove('minimized');
+        // Focus input when opening chat
+        setTimeout(() => {
+            const chatInput = document.getElementById('chatInput');
+            if (chatInput) chatInput.focus();
+        }, 300);
+    }
+}
+
+function sendMessage() {
+    const chatInput = document.getElementById('chatInput');
+    const message = chatInput.value.trim();
+    
+    if (!message) return;
+    
+    // Get current username
+    const username = getCurrentUsername();
+    
+    // Add user message
+    addChatMessage(username, message, 'user');
+    
+    // Clear input
+    chatInput.value = '';
+}
+
+function getCurrentUsername() {
+    // Always return 'user' as requested
+    return 'user';
+}
+
+function addChatMessage(username, message, type) {
+    const messageObj = {
+        username: username,
+        message: message,
+        type: type,
+        timestamp: new Date().toISOString()
+    };
+    
+    chatMessages.push(messageObj);
+    
+    // Keep only last 50 messages
+    if (chatMessages.length > 50) {
+        chatMessages = chatMessages.slice(-50);
+    }
+    
+    // Save to localStorage
+    localStorage.setItem('khudroChatMessages', JSON.stringify(chatMessages));
+    
+    // Display the message
+    displayChatMessage(messageObj);
+    
+    // Scroll to bottom
+    const chatMessagesContainer = document.getElementById('chatMessages');
+    if (chatMessagesContainer) {
+        chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+    }
+}
+
+function displayChatMessage(messageObj) {
+    const chatMessagesContainer = document.getElementById('chatMessages');
+    if (!chatMessagesContainer) return;
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `chat-message ${messageObj.type}`;
+    
+    if (messageObj.type === 'system') {
+        messageDiv.innerHTML = `<div class="message-content">${messageObj.message}</div>`;
+    } else {
+        const displayName = messageObj.type === 'user' ? 'You' : messageObj.username;
+        messageDiv.innerHTML = `
+            <div class="message-content">
+                <strong>${displayName}:</strong> ${messageObj.message}
+            </div>
+        `;
+    }
+    
+    chatMessagesContainer.appendChild(messageDiv);
+}
+
+function displayChatMessages() {
+    const chatMessagesContainer = document.getElementById('chatMessages');
+    if (!chatMessagesContainer) return;
+    
+    chatMessagesContainer.innerHTML = '';
+    
+    // Add welcome message if no messages
+    if (chatMessages.length === 0) {
+        chatMessagesContainer.innerHTML = `
+            <div class="chat-message system">
+                <div class="message-content">Welcome to KhudroBet Chat!</div>
+            </div>
+        `;
+        return;
+    }
+    
+    // Display all messages
+    chatMessages.forEach(messageObj => {
+        displayChatMessage(messageObj);
+    });
+    
+    // Scroll to bottom
+    chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+}
 
